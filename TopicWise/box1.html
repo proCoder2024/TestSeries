@@ -474,7 +474,20 @@
         showQuestion();
       });
     }
-    
+     // Add a button to visit the puzzle description from the question view dd
+    function addVisitPuzzleButton() {
+      const btnGroup = document.querySelector('.btn-group');
+      if (!btnGroup) return;
+      const visitBtn = document.createElement('button');
+      visitBtn.textContent = 'View Puzzle';
+      visitBtn.type = 'button';
+      visitBtn.style.background = '#8e24aa';
+      visitBtn.style.order = '-1';
+      visitBtn.addEventListener('click', () => {
+      showPuzzleDescription();
+      });
+      btnGroup.insertBefore(visitBtn, btnGroup.firstChild);
+    }
     // Display the current question with Previous, Skip, and Next buttons.
     function showQuestion() {
       updateProgress();
