@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- The meta viewport tag ensures proper scaling on small screens -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Puzzle pre Level</title>
+  <style>
+    /* --- Default Styles for Desktop --- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e8eaf6, #c5cae9);
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 800px;
+    }
+    h2, h3 {
+      text-align: center;
+      color: #3f51b5;
+      margin-bottom: 20px;
+    }
+     .description h3 {
+        text-align: justify;
+      }
+    .description, .question {
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeIn 0.7s forwards;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    .progress-container {
+      width: 100%;
+      background: #eee;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .progress-bar {
+      height: 10px;
+      width: 0;
+      background: #3f51b5;
+      transition: width 0.5s ease;
+    }
+    .progress-text {
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: bold;
+      font-size: 1em;
+      color: #555;
+    }
+    .question p {
+      margin-bottom: 15px;
+      font-size: 1.1em;
+      line-height: 1.4;
+      color: #333;
+    }
+    /* Colorful QnA list */
+    ul.options {
+      list-style: none;
+      padding: 0;
+    }
+    ul.options li {
+      margin-bottom: 10px;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      transition: background 0.3s, transform 0.2s;
+      cursor: pointer;
+      font-size: 1.1em;
+      color: #333;
+    }
+    ul.options li:hover {
+      background: linear-gradient(135deg, #dceefb, #b3d4fc);
+      transform: scale(1.02);
+    }
+    input[type="radio"] {
+      margin-right: 10px;
+      transform: scale(1.2);
+      vertical-align: middle;
+    }
+    .btn-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    button {
+      flex: 1;
+      padding: 12px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      background: #3f51b5;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #303f9f;
+    }
+    .restart-btn {
+      background: #f44336;
+    }
+    /* Final result styling */
+    .final-score {
+      background: linear-gradient(135deg, #8e24aa, #d81b60);
+      color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      margin-top: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .final-score h3 {
+      margin-bottom: 10px;
+      font-size: 1.5em;
+    }
+    .final-score p {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+    }
+    /* Review section styles */
+    .review-section {
+      margin-top: 20px;
+    }
+    .review-section h2 {
+      text-align: center;
+      color: #3f51b5;
+      margin-bottom: 20px;
+    }
+    .review-puzzle {
+      margin-bottom: 30px;
+      padding: 15px;
+      background: #f1f8e9;
+      border-radius: 6px;
+      border: 1px solid #c5e1a5;
+    }
+    .review-puzzle h3 {
+      text-align: left;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 4px;
+      color: #2e7d32;
+    }
+    .review-question {
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .review-question p {
+      margin-bottom: 5px;
+    }
+    .correct {
+      background: #c8e6c9;
+      border: 1px solid #81c784;
+      color: #2e7d32;
+    }
+    .incorrect {
+      background: #ffcdd2;
+      border: 1px solid #e57373;
+      color: #c62828;
+    }
+    .skipped {
+      background: #fff9c4;
+      border: 1px solid #fff176;
+      color: #f9a825;
+    }
+    /* --- Mobile-Friendly Styles --- */
+    @media only screen and (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      .container {
+        padding: 20px;
+        max-width: 100%;
+      }
+      h2 {
+        font-size: 1.5em;
+      }
+      .progress-text {
+        font-size: 0.9em;
+      }
+      .question p {
+        font-size: 1em;
+      }
+      ul.options li {
+        padding: 10px;
+        font-size: 1em;
+      }
+      input[type="radio"] {
+        transform: scale(1.3);
+      }
+      .btn-group {
+        flex-direction: column;
+      }
+      button {
+        padding: 10px;
+        font-size: 0.95em;
+      }
+      /* Justify puzzle description text on mobile */
+      .description h3 {
+        text-align: justify;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Box Based Set-2</h2>
+    <div class="progress-container">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+    <div id="content"></div>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    "use strict";
+    
+    // Each puzzle consists of a description and its associated questions.
+    // Each puzzle will also have a userAnswers array to store the user's responses.
+    const puzzles = [
+      {
+        description: `Puzzle 1<br>
+Eight boxes viz. A, B, C, D, E, F, G, and H are kept one above another in a single stack. The lowermost box is numbered as 1 and immediately above it is numbered as 2 and so on till the topmost box is numbered as 8. Three boxes are kept between A and G. Only one box is kept between D and A. Box A is kept above box G. Box B and Box D are kept adjacent to each other. Box E is kept immediately above box G. There are two boxes kept between F and H. The box F is kept immediately below box G.`,
+        questions: [
+          {
+            question: "Which among the following box kept just below box A?",
+            options: ["Box G", "Box H", "Box B", "Box F", "Box C"],
+            answer: "Box C"
+          },
+          {
+            question: "How many boxes were kept in between Box B and Box G?",
+            options: ["None", "One", "Two", "Three", "More than three"],
+            answer: "More than three"
+          },
+          {
+            question: "Which among the following box kept just above Box E?",
+            options: ["Box A", "Box B", "Box H", "Box C", "Box D"],
+            answer: "Box H"
+          },
+          {
+            question: "Which of the following statement is/are not true?",
+            options: [
+              "Two boxes were kept in between Box H and Box F",
+              "Box D does not keep at the top of all the boxes",
+              "Box C and Box A are kept adjacent to each other",
+              "Both A and B",
+              "Both B and C"
+            ],
+            answer: "Box D does not keep at the top of all the boxes"
+          },
+          {
+            question: "Which of the following box is kept third from the bottom?",
+            options: ["Box E", "Box G", "Box H", "Box F", "Box A"],
+            answer: "Box E"
+          }
+        ],
+        userAnswers: []
+      },
+      {
+        description: `Puzzle 2<br>
+Nine boxes – P, Q, R, S, T, U, V, W, and X are kept one above another in the stack. The lowermost shelf is numbered as one and the topmost shelf is numbered as nine. All the information is not necessarily in the same order. Box X is kept at an even number position below the sixth shelf. Only two boxes are kept between X and U. Only three boxes are kept between U and T. The number of boxes kept above T is one more than the number of boxes kept below P. The number of boxes kept between P and U is the same as between T and V. Box Q has kept immediately above box S. Box R is kept adjacent to neither box X nor box P.`,
+        questions: [
+          {
+            question: "How many boxes are kept above box W?",
+            options: ["More than Four", "Four", "Three", "Two", "None"],
+            answer: "Four"
+          },
+          {
+            question: "Which of the following box is kept above box X?\nI) The box kept at fifth position\nII) The box kept immediately above Box V\nIII) The box kept immediately below Box S",
+            options: ["Only II and III", "Only III", "Only I and III", "Only II", "None of the statement is false"],
+            answer: "Only I and III"
+          },
+          {
+            question: "How many boxes are kept between Box S and Box T?",
+            options: ["Four", "Three", "Two", "Five", "None of the above"],
+            answer: "Four"
+          },
+          {
+            question: "Which of the following box kept at the eighth position from the top?",
+            options: [
+              "Box W",
+              "The box which is kept immediately below box P",
+              "The box which is kept two boxes below U",
+              "The box which is kept immediately above Box R",
+              "Box X"
+            ],
+            answer: "The box which is kept immediately above Box R"
+          },
+          {
+            question: "If all the boxes are arranged in alphabetical order from the top of the stack, how many boxes remain unchanged its position?",
+            options: ["None", "One", "Two", "Three", "More than three"],
+            answer: "None"
+          }
+        ],
+        userAnswers: []
+      },
+      {
+        description: `Puzzle 3<br>
+Nine boxes O, P, Q, R, S, T, U, V and W are kept one above another in a single stack but not necessarily in the same order. Box R is kept two boxes above box Q. Three boxes are kept between box R and box U which is kept two boxes away from box O. Box S is kept below box Q. Two boxes are kept between box P and box T which is kept immediately above box Q. The number of boxes kept between V and S is the same as the number of boxes kept above box W. More than one box is kept above box W.`,
+        questions: [
+          {
+            question: "How many boxes are kept between box T and box O?",
+            options: ["One", "Two", "Three", "Four", "None of these"],
+            answer: "Four"
+          },
+          {
+            question: "Which of the following box is kept three boxes below the box which is kept immediately below box R?",
+            options: ["Box O", "Box W", "Box U", "Box S", "None of these"],
+            answer: "Box U"
+          },
+          {
+            question: "How many boxes are kept between Box O and Box R?",
+            options: [
+              "Same as between boxes T and O",
+              "Same as between boxes R and U",
+              "Same as between P and W",
+              "Same as between V and S",
+              "None of these"
+            ],
+            answer: "Same as between V and S"
+          },
+          {
+            question: "Four of the following five are related in a certain way and hence from the group. Which is the one that does not belong to the group?",
+            options: ["P-V", "S-O", "Q-W", "U-S", "T-U"],
+            answer: "T-U"
+          },
+          {
+            question: "Which of the following box is kept fourth above from box S?",
+            options: [
+              "V",
+              "The box which is kept immediately below box Q",
+              "P",
+              "The box which is kept two boxes below box W",
+              "None of these"
+            ],
+            answer: "None of these"
+          }
+        ],
+        userAnswers: []
+      },
+      {
+        description: `Puzzle 4<br>
+Seven boxes of different colors among Orange, Silver, Golden, Grey, Purple, Green, and White are kept one above another such that the bottom-most is numbered as one and topmost as seven. The box which is kept just below of Grey box is kept three places above the Purple box. Only two boxes are kept between the Golden box and the Grey box. The white box is kept just above of Golden box. Green box is kept in a prime numbered position. The grey box is kept above of green box. The orange box is kept below of Silver box. Only two boxes do not keep between white box and silver box.`,
+        questions: [
+          {
+            question: "Which of the following box is kept in the bottom-most position?",
+            options: ["Purple", "Green", "Orange", "Silver", "Golden"],
+            answer: "Orange"
+          },
+          {
+            question: "How many boxes are kept between the Silver box and Purple box?",
+            options: [
+              "Same as boxes kept below purple box",
+              "Same as boxes between Grey and Green",
+              "Same as boxes between Silver and Golden",
+              "Same as boxes kept above Orange",
+              "None of these"
+            ],
+            answer: "Same as boxes kept below purple box"
+          },
+          {
+            question: "Which of the following is/are true statements regarding White box?",
+            options: [
+              "Silver box is kept below the White box",
+              "Two boxes are kept between White and Green box",
+              "Orange box is kept above of White box",
+              "White box is kept in an even-numbered position",
+              "All are true"
+            ],
+            answer: "Two boxes are kept between White and Green box"
+          },
+          {
+            question: "Four from the following five are related in a certain way and hence form a group. Find the one which doesn't belong to that group?",
+            options: ["Grey", "Orange", "White", "Golden", "Purple"],
+            answer: "Golden"
+          },
+          {
+            question: "What is the position of the Green box with respect to Golden box?",
+            options: [
+              "Three boxes below",
+              "Immediately below",
+              "Two boxes above",
+              "Two boxes below",
+              "Four boxes below"
+            ],
+            answer: "Two boxes below"
+          }
+        ],
+        userAnswers: []
+      }
+    ];
+    
+    // Global state variables
+    let currentPuzzleIndex = 0;
+    let currentQuestionIndex = 0;
+    const totalQuestions = puzzles.reduce((sum, puzzle) => sum + puzzle.questions.length, 0);
+    const contentDiv = document.getElementById("content");
+    const resultDiv = document.getElementById("result");
+    const progressBar = document.getElementById("progressBar");
+    
+    // Update the progress bar for the current puzzle.
+    function updateProgress() {
+      const puzzle = puzzles[currentPuzzleIndex];
+      const progressPercent = (currentQuestionIndex / puzzle.questions.length) * 100;
+      progressBar.style.width = progressPercent + "%";
+    }
+    /**
+     * Shuffle an array in place using Fisher-Yates algorithm.
+     * @param {Array} arr
+     */
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+    }
+
+    // Shuffle options for each question in all puzzles (once at start)
+    puzzles.forEach(puzzle => {
+      puzzle.questions.forEach(q => {
+        // Store the correct answer before shuffling
+        const correct = q.answer;
+        shuffleArray(q.options);
+        // After shuffling, update q.answer to the new correct option string
+        // (since answer is the string itself, no change needed)
+        // If you want to store the index, you could do so here
+      });
+    });
+    // Display the description for the current puzzle.
+    function showPuzzleDescription() {
+      updateProgress();
+      const puzzle = puzzles[currentPuzzleIndex];
+      contentDiv.innerHTML = `
+        <div class="description">
+          <h3>${puzzle.description}</h3>
+        </div>
+        <button id="startPuzzleBtn">Start Puzzle ${currentPuzzleIndex + 1}</button>
+      `;
+      document.getElementById("startPuzzleBtn").addEventListener("click", () => {
+        if (!puzzle.userAnswers.length) {
+          puzzle.userAnswers = new Array(puzzle.questions.length).fill(null);
+        }
+        currentQuestionIndex = 0;
+        showQuestion();
+      });
+    }
+    
+    // Display the current question with Previous, Skip, and Next buttons.
+    function showQuestion() {
+      updateProgress();
+      const puzzle = puzzles[currentPuzzleIndex];
+      if (currentQuestionIndex >= puzzle.questions.length) {
+        showPuzzleCompletion();
+        return;
+      }
+      const q = puzzle.questions[currentQuestionIndex];
+      const progressText = `<div class="progress-text">Puzzle ${currentPuzzleIndex + 1}: Question ${currentQuestionIndex + 1} of ${puzzle.questions.length}</div>`;
+      contentDiv.innerHTML = progressText + `
+        <div class="question">
+          <p>${q.question}</p>
+          <ul class="options">
+            ${q.options.map((option, i) => {
+              const checked = (puzzle.userAnswers[currentQuestionIndex] === option) ? "checked" : "";
+              return `<li onclick="selectOption('option${i}')">
+                        <input type="radio" id="option${i}" name="option" value="${option}" ${checked}>
+                        <label for="option${i}">${option}</label>
+                      </li>`;
+            }).join('')}
+          </ul>
+        </div>
+        <div class="btn-group">
+          ${currentQuestionIndex > 0 ? '<button id="prevBtn">Previous</button>' : ''}
+          <button id="skipBtn">Skip</button>
+          <button id="nextBtn">Next</button>
+        </div>
+      `;
+      if(document.getElementById("prevBtn")) {
+        document.getElementById("prevBtn").addEventListener("click", goToPreviousQuestion);
+      }
+      document.getElementById("skipBtn").addEventListener("click", skipQuestion);
+      document.getElementById("nextBtn").addEventListener("click", evaluateAnswer);
+    }
+    
+    // Highlight the chosen option and check its radio button.
+    function selectOption(optionId) {
+      document.querySelectorAll("ul.options li").forEach(li => li.style.backgroundColor = '');
+      const selectedLi = document.getElementById(optionId).parentNode;
+      selectedLi.style.backgroundColor = "#e8eaf6";
+      document.getElementById(optionId).checked = true;
+    }
+    
+    // Save the answer (if any) and move to the next question.
+    function evaluateAnswer() {
+      const puzzle = puzzles[currentPuzzleIndex];
+      const selectedOption = document.querySelector("input[name='option']:checked");
+      if (!selectedOption) {
+        alert("Please select an answer or use the Skip button!");
+        return;
+      }
+      puzzle.userAnswers[currentQuestionIndex] = selectedOption.value;
+      currentQuestionIndex++;
+      showQuestion();
+    }
+    
+    // Skip the current question.
+    function skipQuestion() {
+      const puzzle = puzzles[currentPuzzleIndex];
+      puzzle.userAnswers[currentQuestionIndex] = null;
+      currentQuestionIndex++;
+      showQuestion();
+    }
+    
+    // Go back to the previous question.
+    function goToPreviousQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        showQuestion();
+      }
+    }
+    
+    // When completing the current puzzle, either move to the next or show the final result.
+    function showPuzzleCompletion() {
+      updateProgress();
+      contentDiv.innerHTML = `
+        <div class="description">
+          <h3>You have completed Puzzle ${currentPuzzleIndex + 1}.</h3>
+        </div>
+      `;
+      if (currentPuzzleIndex < puzzles.length - 1) {
+        const btn = document.createElement("button");
+        btn.innerText = "Next Puzzle";
+        btn.addEventListener("click", () => {
+          currentPuzzleIndex++;
+          showPuzzleDescription();
+        });
+        contentDiv.appendChild(btn);
+      } else {
+        showFinalResult();
+      }
+    }
+    
+    // Compute the overall score by comparing stored answers with correct answers.
+    function computeScore() {
+      let score = 0;
+      puzzles.forEach(puzzle => {
+        puzzle.questions.forEach((q, i) => {
+          if (puzzle.userAnswers[i] === q.answer) {
+            score++;
+          }
+        });
+      });
+      return score;
+    }
+    
+    // Display the final result with a colorful, professional style and buttons to review or restart.
+    function showFinalResult() {
+      const overallScore = computeScore();
+      const percentage = Math.round((overallScore / totalQuestions) * 100);
+      contentDiv.innerHTML = `
+        <div class="final-score">
+          <h3>Your Score: ${overallScore} out of ${totalQuestions}</h3>
+          <p>Percentage: ${percentage}%</p>
+          <button id="reviewBtn">Review Answers 🔍</button>
+          <button id="restartBtn" class="restart-btn">Restart Quiz 🔄</button>
+        </div>
+      `;
+      resultDiv.innerHTML = "";
+      document.getElementById("reviewBtn").addEventListener("click", showReview);
+      document.getElementById("restartBtn").addEventListener("click", restartQuiz);
+    }
+    
+    // The review function: List each puzzle and its questions with color-coded feedback and emojis.
+    // For skipped questions, the correct answer is also shown.
+    function showReview() {
+      let reviewHTML = `<div class="review-section"><h2>Review Answers</h2>`;
+      
+      puzzles.forEach((puzzle, pIndex) => {
+        reviewHTML += `<div class="review-puzzle">
+                        <h3>Puzzle ${pIndex + 1}</h3>`;
+        puzzle.questions.forEach((q, qIndex) => {
+          const userAnswer = puzzle.userAnswers[qIndex];
+          const correctAnswer = q.answer;
+          let statusClass = "";
+          let statusText = "";
+          if (userAnswer === null) {
+            statusClass = "skipped";
+            statusText = `⚠️ Skipped. Correct Answer: <span style="color:#2e7d32; font-weight:bold;">${correctAnswer}</span>`;
+          } else if (userAnswer === correctAnswer) {
+            statusClass = "correct";
+            statusText = "✅ Correct!";
+          } else {
+            statusClass = "incorrect";
+            statusText = `❌ Incorrect. Your Answer: <span style="color:#c62828; font-weight:bold;">${userAnswer}</span> | Correct Answer: <span style="color:#2e7d32; font-weight:bold;">${correctAnswer}</span>`;
+          }
+          reviewHTML += `<div class="review-question ${statusClass}">
+                           <p><em>Q${qIndex + 1}:</em> ${q.question}</p>
+                           <p>${statusText}</p>
+                         </div>`;
+        });
+        reviewHTML += `</div>`;
+      });
+      
+      reviewHTML += `<button id="restartBtn2" class="restart-btn">Restart Quiz 🔄</button></div>`;
+      contentDiv.innerHTML = reviewHTML;
+      document.getElementById("restartBtn2").addEventListener("click", restartQuiz);
+    }
+    
+    // Restart the quiz by resetting state and clearing user responses.
+    function restartQuiz() {
+      currentPuzzleIndex = 0;
+      currentQuestionIndex = 0;
+      puzzles.forEach(puzzle => puzzle.userAnswers = new Array(puzzle.questions.length).fill(null));
+      resultDiv.innerHTML = "";
+      showPuzzleDescription();
+    }
+    
+    // Initialize the quiz.
+    showPuzzleDescription();
+    
+    // Expose the selectOption function for inline use.
+    window.selectOption = selectOption;
+  </script>
+</body>
+</html>
