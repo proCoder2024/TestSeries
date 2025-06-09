@@ -1,0 +1,330 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quant Quiz – 10 Qs</title>
+  <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Quantitative Aptitude – 10 Question Set</h2>
+
+    <div class="progress-container">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+
+    <div id="content"></div>
+    <div id="result"></div>
+
+    <footer style="text-align:center; margin-top:30px; color:#888; font-size:1em;">
+      &copy; 2025 By Supriyo Das | Made with
+      <span style="color: red; font-size: 20px;">&hearts;</span>
+    </footer>
+  </div>
+
+  <script>
+    "use strict";
+
+    /* ------------------------------------------------------------------
+       SINGLE-PUZZLE DATA (10 questions)
+       ------------------------------------------------------------------ */
+    const puzzles = [
+      {
+        description: `
+          <span style="color:#8e24aa; font-weight:bold;">Quantitative Aptitude Quiz</span><br>
+          Answer the following ten questions. Select the correct option for each.
+        `,
+        questions: [
+          /* Q-1 */
+          {
+            question:
+              "Q1. A vessel holds a mixture of milk and water in the ratio 4:1. If 20 litres of this mixture is taken out and the remaining milk in the vessel becomes 40 litres, what was the original quantity of water?",
+            options: [
+              "15 litres",
+              "12 litres",
+              "14 litres",
+              "16 litres",
+              "None of these"
+            ],
+            answer: "16 litres"
+          },
+          /* Q-2 */
+          {
+            question:
+              "Q2. Arjun and Rishi can complete a certain job in 6 days. Arjun alone takes 16 days fewer than Rishi to do the same job. After they work together for 3 days, Arjun stops. How many additional days must Rishi work alone to finish the remaining task?",
+            options: ["15", "6", "10", "12", "None of these"],
+            answer: "6"
+          },
+          /* Q-3 */
+          {
+            question:
+              "Q3. In 2 years, the ratio of Rani's age to Suman's age will be 5:6. Currently, their average age is 31. Find their present age difference.",
+            options: ["3 years", "5 years", "6 years", "8 years", "None of these"],
+            answer: "6 years"
+          },
+          /* Q-4 */
+          {
+            question:
+              "Q4. In Section X, 300 students passed while 40% failed, and in Section Y, 180 students passed with 25% failing. What is the difference between the total number of students in Section X and Section Y?",
+            options: ["220", "240", "260", "280", "None of these"],
+            answer: "240"
+          },
+          /* Q-5 */
+          {
+            question:
+              "Q5. Vinay invests Rs. 5000, and Tushar invests Rs. 2000 more than Vinay. After 6 months, Dhiraj joins with Rs. 4000. At the year's end, Dhiraj's share of the profit is Rs. 900. What is the total profit?",
+            options: [
+              "Rs. 7200",
+              "Rs. 5400",
+              "Rs. 6000",
+              "Rs. 6300",
+              "None of these"
+            ],
+            answer: "Rs. 7200"
+          },
+          /* Q-6 */
+          {
+            question:
+              "Q6. A 360-metre-long train travels at a certain speed and crosses a platform in 30 seconds. If its speed is increased by 4 m/s, it crosses a pole in 15 seconds. Find the length of the platform.",
+            options: ["210 m", "270 m", "300 m", "240 m", "None of these"],
+            answer: "240 m"
+          },
+          /* Q-7 */
+          {
+            question:
+              "Q7. An item is sold for Rs. 3240 after two successive discounts of 10% and x% on a marked price of Rs. 4000. If the transaction yields a 20% profit on cost price, find that cost price.",
+            options: [
+              "Rs. 3000",
+              "Rs. 2700",
+              "Rs. 2560",
+              "Rs. 2800",
+              "None of these"
+            ],
+            answer: "Rs. 2700"
+          },
+          /* Q-8 */
+          {
+            question:
+              "Q8. A bag has 6 green, 3 blue, and 3 red balls. If two balls are drawn at random, what is the probability that at least one is green?",
+            options: ["6/11", "8/11", "15/22", "17/22", "None of these"],
+            answer: "15/22"
+          },
+          /* Q-9 */
+          {
+            question:
+              "Q9. A boat's speed in still water is four times the stream's speed. If the boat covers 135 km upstream in 9 hours, find its downstream speed.",
+            options: ["20 km/h", "27.5 km/h", "30 km/h", "25 km/h", "None of these"],
+            answer: "25 km/h"
+          },
+          /* Q-10 */
+          {
+            question:
+              "Q10. A rectangular field has width 'W' m and length 'W + 10' m. Its area is 336 m². If a square side equals the rectangle's width, find the perimeter of that square.",
+            options: ["72 m", "64 m", "48 m", "56 m", "None of these"],
+            answer: "64 m"
+          }
+        ],
+        userAnswers: []
+      }
+    ];
+
+    /* ------------- THE REST OF YOUR ORIGINAL SCRIPT ------------- */
+    let currentPuzzleIndex = 0;
+    let currentQuestionIndex = 0;
+    const totalQuestions = puzzles.reduce((s, p) => s + p.questions.length, 0);
+    const contentDiv  = document.getElementById("content");
+    const resultDiv   = document.getElementById("result");
+    const progressBar = document.getElementById("progressBar");
+
+    function updateProgress() {
+      const puzzle = puzzles[currentPuzzleIndex];
+      const pct = (currentQuestionIndex / puzzle.questions.length) * 100;
+      progressBar.style.width = pct + "%";
+    }
+
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+    }
+
+    /* shuffle options once at start */
+    puzzles.forEach(p =>
+      p.questions.forEach(q => {
+        q._orig = q.answer;
+        shuffleArray(q.options);
+        q.answer = q.options.find(o => o === q._orig);
+      })
+    );
+
+    /* show puzzle description first */
+    function showPuzzleDescription() {
+      updateProgress();
+      const p = puzzles[currentPuzzleIndex];
+      contentDiv.innerHTML = `
+        <div class="description"><h3>${p.description}</h3></div>
+        <button id="startPuzzleBtn">Start Quiz</button>`;
+      document
+        .getElementById("startPuzzleBtn")
+        .addEventListener("click", () => {
+          if (!p.userAnswers.length)
+            p.userAnswers = new Array(p.questions.length).fill(null);
+          currentQuestionIndex = 0;
+          showQuestion();
+        });
+    }
+
+    function addViewPuzzleButton() {
+      const btnGroup = document.querySelector(".btn-group");
+      if (btnGroup && !document.getElementById("viewPuzzleBtn")) {
+        const v = document.createElement("button");
+        v.id = "viewPuzzleBtn";
+        v.textContent = "View Intro";
+        v.style.background = "#8e24aa";
+        v.style.order = "-1";
+        v.onclick = () => showPuzzleDescription();
+        btnGroup.insertBefore(v, btnGroup.firstChild);
+      }
+    }
+
+    function showQuestion() {
+      updateProgress();
+      const p = puzzles[currentPuzzleIndex];
+      if (currentQuestionIndex >= p.questions.length) {
+        showPuzzleCompletion();
+        return;
+      }
+      const q = p.questions[currentQuestionIndex];
+      contentDiv.innerHTML = `
+        <div class="progress-text">Question ${currentQuestionIndex + 1} of ${p.questions.length}</div>
+        <div class="question">
+          <p>${q.question}</p>
+          <ul class="options">
+            ${q.options
+              .map(
+                (opt, i) => `
+              <li onclick="selectOption('o${i}')">
+                <input type="radio" id="o${i}" name="opt" value="${opt}"
+                  ${p.userAnswers[currentQuestionIndex] === opt ? "checked" : ""}>
+                <label for="o${i}">${opt}</label>
+              </li>`
+              )
+              .join("")}
+          </ul>
+        </div>
+        <div class="btn-group">
+          ${currentQuestionIndex > 0 ? '<button id="prevBtn">Previous</button>' : ""}
+          <button id="skipBtn">Skip</button>
+          <button id="nextBtn">Next</button>
+        </div>`;
+
+      if (document.getElementById("prevBtn"))
+        document.getElementById("prevBtn").onclick = goToPreviousQuestion;
+      document.getElementById("skipBtn").onclick = skipQuestion;
+      document.getElementById("nextBtn").onclick = evaluateAnswer;
+      addViewPuzzleButton();
+    }
+
+    window.selectOption = id => {
+      document.querySelectorAll("ul.options li").forEach(li => (li.style.background = ""));
+      const li = document.getElementById(id).parentNode;
+      li.style.background = "#e8eaf6";
+      document.getElementById(id).checked = true;
+    };
+
+    function evaluateAnswer() {
+      const p = puzzles[currentPuzzleIndex];
+      const sel = document.querySelector("input[name='opt']:checked");
+      if (!sel) return alert("Pick an option or hit Skip!");
+      p.userAnswers[currentQuestionIndex] = sel.value;
+      currentQuestionIndex++;
+      showQuestion();
+    }
+
+    function skipQuestion() {
+      puzzles[currentPuzzleIndex].userAnswers[currentQuestionIndex] = null;
+      currentQuestionIndex++;
+      showQuestion();
+    }
+
+    function goToPreviousQuestion() {
+      if (currentQuestionIndex > 0) currentQuestionIndex--;
+      showQuestion();
+    }
+
+    function showPuzzleCompletion() {
+      updateProgress();
+      contentDiv.innerHTML = `
+        <div class="description"><h3>You have completed the quiz!</h3></div>
+        <button id="seeResult">See Result</button>`;
+      document.getElementById("seeResult").onclick = showFinalResult;
+    }
+
+    function computeScore() {
+      let score = 0;
+      puzzles.forEach(p =>
+        p.questions.forEach((q, i) => {
+          if (p.userAnswers[i] === q.answer) score++;
+        })
+      );
+      return score;
+    }
+
+    function showFinalResult() {
+      const score = computeScore();
+      const pct = Math.round((score / totalQuestions) * 100);
+      contentDiv.innerHTML = `
+        <div class="final-score">
+          <h3>Your Score: ${score} / ${totalQuestions}</h3>
+          <p>Percentage: ${pct}%</p>
+          <button id="reviewBtn">Review Answers 🔍</button>
+          <button id="restartBtn">Restart Quiz 🔄</button>
+        </div>`;
+      document.getElementById("reviewBtn").onclick = showReview;
+      document.getElementById("restartBtn").onclick = restartQuiz;
+    }
+
+    function showReview() {
+      let html = `<div class="review-section"><h2>Review Answers</h2>`;
+      const p = puzzles[0];
+      p.questions.forEach((q, i) => {
+        const ua = p.userAnswers[i];
+        const ca = q.answer;
+        let cls = "",
+          status = "";
+        if (ua === null) {
+          cls = "skipped";
+          status = `⚠️ Skipped. Correct: <span style="color:#2e7d32;">${ca}</span>`;
+        } else if (ua === ca) {
+          cls = "correct";
+          status = "✅ Correct";
+        } else {
+          cls = "incorrect";
+          status = `❌ Incorrect. You: <span style="color:#c62828;">${ua}</span> | Correct: <span style="color:#2e7d32;">${ca}</span>`;
+        }
+        html += `
+          <div class="review-question ${cls}">
+            <p><em>Q${i + 1}.</em> ${q.question}</p>
+            <p>${status}</p>
+          </div>`;
+      });
+      html += `<button id="restartBtn2">Restart Quiz 🔄</button></div>`;
+      contentDiv.innerHTML = html;
+      document.getElementById("restartBtn2").onclick = restartQuiz;
+    }
+
+    function restartQuiz() {
+      currentPuzzleIndex = 0;
+      currentQuestionIndex = 0;
+      puzzles.forEach(p => (p.userAnswers = new Array(p.questions.length).fill(null)));
+      showPuzzleDescription();
+    }
+
+    /* boot-strap */
+    showPuzzleDescription();
+  </script>
+</body>
+</html>
