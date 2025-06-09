@@ -474,20 +474,27 @@
         showQuestion();
       });
     }
-     // Add a button to visit the puzzle description from the question view dddd
-    function addVisitPuzzleButton() {
-      const btnGroup = document.querySelector('.btn-group');
-      if (!btnGroup) return;
-      const visitBtn = document.createElement('button');
-      visitBtn.textContent = 'View Puzzle';
-      visitBtn.type = 'button';
-      visitBtn.style.background = '#8e24aa';
-      visitBtn.style.order = '-1';
-      visitBtn.addEventListener('click', () => {
+  // Add a button to view the puzzle description from the questions.
+  function addViewPuzzleButton() {
+    const btnGroup = document.querySelector('.btn-group');
+    if (btnGroup && !document.getElementById('viewPuzzleBtn')) {
+    const viewBtn = document.createElement('button');
+    viewBtn.id = 'viewPuzzleBtn';
+    viewBtn.textContent = 'View Puzzle';
+    viewBtn.style.background = '#8e24aa';
+    viewBtn.style.order = '-1';
+    viewBtn.addEventListener('click', () => {
       showPuzzleDescription();
-      });
-      btnGroup.insertBefore(visitBtn, btnGroup.firstChild);
+    });
+    btnGroup.insertBefore(viewBtn, btnGroup.firstChild);
     }
+  }
+  // Call this in showQuestion
+  const originalShowQuestion = showQuestion;
+  showQuestion = function() {
+    originalShowQuestion.apply(this, arguments);
+    addViewPuzzleButton();
+  };
     // Display the current question with Previous, Skip, and Next buttons.
     function showQuestion() {
       updateProgress();
