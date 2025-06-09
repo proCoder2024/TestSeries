@@ -445,6 +445,28 @@ Seven boxes of different colors among Orange, Silver, Golden, Grey, Purple, Gree
         // If you want to store the index, you could do so here
       });
     });
+
+    // Add a button to visit the puzzle description from the question view
+    function addVisitPuzzleButton() {
+      const btnGroup = document.querySelector('.btn-group');
+      if (!btnGroup) return;
+      const visitBtn = document.createElement('button');
+      visitBtn.textContent = 'View Puzzle';
+      visitBtn.type = 'button';
+      visitBtn.style.background = '#8e24aa';
+      visitBtn.style.order = '-1';
+      visitBtn.addEventListener('click', () => {
+      showPuzzleDescription();
+      });
+      btnGroup.insertBefore(visitBtn, btnGroup.firstChild);
+    }
+
+    // Patch showQuestion to add the button after rendering
+    const origShowQuestion = showQuestion;
+    showQuestion = function() {
+      origShowQuestion();
+      addVisitPuzzleButton();
+    };
     // Display the description for the current puzzle.
     function showPuzzleDescription() {
       updateProgress();
