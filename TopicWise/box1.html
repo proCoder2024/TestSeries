@@ -475,8 +475,31 @@
       });
     }
   // Add a button to view the puzzle description from the questions.dd
-  // i think change done
+  /**
+   * Add a "View Puzzle" button to the question screen.
+   * This allows users to see the puzzle description while answering questions.
+   */
   function addViewPuzzleButton() {
+    const btnGroup = document.querySelector('.btn-group');
+    if (btnGroup && !document.getElementById('viewPuzzleBtn')) {
+      const viewBtn = document.createElement('button');
+      viewBtn.id = 'viewPuzzleBtn';
+      viewBtn.textContent = 'View Puzzle';
+      viewBtn.style.background = '#8e24aa';
+      viewBtn.style.order = '-1';
+      viewBtn.addEventListener('click', () => {
+        showPuzzleDescription();
+      });
+      btnGroup.insertBefore(viewBtn, btnGroup.firstChild);
+    }
+  }
+
+  // Patch showQuestion to always add the View Puzzle button
+  const _originalShowQuestion = showQuestion;
+  showQuestion = function() {
+    _originalShowQuestion.apply(this, arguments);
+    addViewPuzzleButton();
+  };function addViewPuzzleButton() {
     const btnGroup = document.querySelector('.btn-group');
     if (btnGroup && !document.getElementById('viewPuzzleBtn')) {
     const viewBtn = document.createElement('button');
