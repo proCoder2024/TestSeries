@@ -5,218 +5,7 @@
   <!-- The meta viewport tag ensures proper scaling on small screens -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Puzzle Pre Level</title>
-  <style>
-    /* --- Default Styles for Desktop --- */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to right, #e8eaf6, #c5cae9);
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      min-height: 100vh;
-    }
-    .container {
-      background: #ffffff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 800px;
-    }
-    h2, h3 {
-      text-align: center;
-      color: #3f51b5;
-      margin-bottom: 20px;
-    }
-    .description, .question {
-      margin-bottom: 20px;
-      opacity: 0;
-      animation: fadeIn 0.7s forwards;
-    }
-    @keyframes fadeIn {
-      to { opacity: 1; }
-    }
-    .progress-container {
-      width: 100%;
-      background: #eee;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-bottom: 20px;
-    }
-    .progress-bar {
-      height: 10px;
-      width: 0;
-      background: #3f51b5;
-      transition: width 0.5s ease;
-    }
-    .progress-text {
-      text-align: center;
-      margin-bottom: 10px;
-      font-weight: bold;
-      font-size: 1em;
-      color: #555;
-    }
-    .question p {
-      margin-bottom: 15px;
-      font-size: 1.1em;
-      line-height: 1.4;
-      color: #333;
-    }
-    /* Colorful QnA list hm  */
-    ul.options {
-      list-style: none;
-      padding: 0;
-    }
-    ul.options li {
-      margin-bottom: 10px;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-      transition: background 0.3s, transform 0.2s;
-      cursor: pointer;
-      font-size: 1.1em;
-      color: #333;
-    }
-    ul.options li:hover {
-      background: linear-gradient(135deg, #dceefb, #b3d4fc);
-      transform: scale(1.02);
-    }
-    input[type="radio"] {
-      margin-right: 10px;
-      transform: scale(1.2);
-      vertical-align: middle;
-    }
-    .btn-group {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    button {
-      flex: 1;
-      padding: 12px 20px;
-      font-size: 1em;
-      cursor: pointer;
-      background: #3f51b5;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      transition: background 0.3s;
-    }
-    button:hover {
-      background: #303f9f;
-    }
-    .restart-btn {
-      background: #f44336;
-    }
-    /* Final result styling */
-    .final-score {
-      background:  linear-gradient(135deg, #00c6ff, #0072ff);
-      color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      text-align: center;
-      margin-top: 20px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-    .final-score h3 {
-      margin-bottom: 10px;
-      font-size: 1.5em;
-    }
-    .final-score p {
-      font-size: 1.2em;
-      margin-bottom: 20px;
-    }
-    /* Review section styles */
-    .review-section {
-      margin-top: 20px;
-    }
-    .review-section h2 {
-      text-align: center;
-      color: #3f51b5;
-      margin-bottom: 20px;
-    }
-    .review-puzzle {
-      margin-bottom: 30px;
-      padding: 15px;
-      background: #f1f8e9;
-      border-radius: 6px;
-      border: 1px solid #c5e1a5;
-    }
-    .review-puzzle h3 {
-      text-align: left;
-      margin-bottom: 10px;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 4px;
-      color: #2e7d32;
-    }
-    .review-question {
-      margin-bottom: 15px;
-      padding: 10px;
-      border-radius: 4px;
-    }
-    .review-question p {
-      margin-bottom: 5px;
-    }
-    .correct {
-      background: #c8e6c9;
-      border: 1px solid #81c784;
-      color: #2e7d32;
-    }
-    .incorrect {
-      background: #ffcdd2;
-      border: 1px solid #e57373;
-      color: #c62828;
-    }
-    .skipped {
-      background: #fff9c4;
-      border: 1px solid #fff176;
-      color: #f9a825;
-    }
-    /* --- Mobile-Friendly Styles --- */
-    @media only screen and (max-width: 600px) {
-      body {
-        padding: 10px;
-      }
-      .container {
-        padding: 20px;
-        max-width: 100%;
-      }
-      h2 {
-        font-size: 1.5em;
-      }
-      .progress-text {
-        font-size: 0.9em;
-      }
-      .question p {
-        font-size: 1em;
-      }
-      ul.options li {
-        padding: 10px;
-        font-size: 1em;
-      }
-      input[type="radio"] {
-        transform: scale(1.3);
-      }
-      .btn-group {
-        flex-direction: column;
-      }
-      button {
-        padding: 10px;
-        font-size: 0.95em;
-      }
-      /* Justify puzzle description text on mobile */
-      .description h3 {
-        text-align: justify;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="/style2.css">
 </head>
 <body>
   <div class="container">
@@ -226,6 +15,9 @@
     </div>
     <div id="content"></div>
     <div id="result"></div>
+    <footer style="text-align:center; margin-top:30px; color:#888; font-size:1em;">
+      &copy; 2025 By Supriyo Das | Made with <span style="color: red; font-size: 20px;">&hearts;</span>
+    </footer>
   </div>
 
   <script>
@@ -237,9 +29,10 @@
       {
         description: `<span style="color:#8e24aa; font-weight:bold;">Puzzle 1</span><br>
         Seven boxes - A, B, C, D, E, F, and G are kept one above the other on a single stack, but not necessarily in the same order. 
-        The lowermost shelf is numbered as one and the topmost shelf is numbered as seven. Only two boxes are kept between G and C, where either of the boxes is kept on the lowermost shelf. 
+        The lowermost shelf is numbered as one and the topmost shelf is numbered as seven. 
+        <p>Only two boxes are kept between G and C, where either of the boxes is kept on the lowermost shelf. 
         Only one box is kept between the boxes D and C. Both the boxes D and G are kept on adjacent shelves. 
-        [Additional info:] Box B is kept two boxes above box A. Box A is kept above box G. The number of boxes kept above box E is the same as the number of boxes kept below box F. Box E is kept above box A.`,
+        Box B is kept two boxes above box A. Box A is kept above box G. The number of boxes kept above box E is the same as the number of boxes kept below box F. Box E is kept above box A.</p>`,
         questions: [
           {
             question: "Puzzle 1, Q1: How many boxes are kept between A and C?",
@@ -278,9 +71,10 @@
       {
         description: `<span style="color:#8e24aa; font-weight:bold;">Puzzle 2</span><br>
         Eight boxes - P, Q, R, S, T, U, V, and W are kept one above the other on a single stack, but not necessarily in the same order. 
-        The lowermost shelf is numbered as one and the topmost shelf is numbered as eight. Only one box is kept between P and W. Box S is kept immediately above box W. 
+        The lowermost shelf is numbered as one and the topmost shelf is numbered as eight. 
+        <p> Only one box is kept between P and W. Box S is kept immediately above box W. 
         Box R is kept two boxes above box V. Only two boxes are kept between W and V. Boxes R and W are not kept adjacent to each other. 
-        [Additional info:] Box U is kept immediately above box Q. Box U is kept somewhere below box S.`,
+         Box U is kept immediately above box Q. Box U is kept somewhere below box S.</p>`,
         questions: [
           {
             question: "Puzzle 2, Q6: Which box is kept on the fourth shelf?",
@@ -332,10 +126,10 @@
         description: `<span style="color:#8e24aa; font-weight:bold;">Puzzle 3</span><br>
         Nine boxes - L, M, N, O, P, Q, R, S, and T are kept one above another on a single stack but not necessarily in the same order. 
         The lowermost shelf is numbered as one and the topmost shelf is numbered as nine. 
-        [Additional info:] Only four boxes are kept between T and N (with N below T). Box L is kept two boxes above box T. 
+        <p>  Only four boxes are kept between T and N (with N below T). Box L is kept two boxes above box T. 
         Only one box is kept between N and O. Box P is kept immediately above box M. 
         The number of boxes between M and T is the same as between Q and S. 
-        Box Q is not adjacent to either box T or box N.`,
+        Box Q is not adjacent to either box T or box N. </p>`,
         questions: [
           {
             question: "Puzzle 3, Q11: Which box is kept on the lowermost shelf?",
