@@ -452,7 +452,7 @@
         // Store the original answer before shuffling
         q._originalAnswer = q.answer;
         shuffleArray(q.options);
-        // Update the answer to match the shuffled option
+        // Update the answer to match the shuffled option ok 
         q.answer = q.options.find(opt => opt === q._originalAnswer);
       });
     });
