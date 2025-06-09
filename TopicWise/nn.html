@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Puzzle Level</title>
+  <link rel="stylesheet" href="style2.css">
+  <style>
+    /* Basic styling for demonstration purposes. In a real scenario, style2.css would handle this. */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #3f51b5;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .progress-container {
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      height: 10px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: #4caf50;
+      border-radius: 5px;
+      transition: width 0.4s ease-in-out;
+    }
+    .description {
+      padding: 15px;
+      background-color: #e8eaf6;
+      border-left: 5px solid #8e24aa;
+      margin-bottom: 20px;
+    }
+    .question {
+      margin-bottom: 20px;
+    }
+    .question p {
+      font-weight: bold;
+      color: #555;
+    }
+    .options {
+      list-style: none;
+      padding: 0;
+    }
+    .options li {
+      background-color: #f0f4c3;
+      margin-bottom: 10px;
+      padding: 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+      display: flex;
+      align-items: center;
+    }
+    .options li:hover {
+      background-color: #e6ee9c;
+    }
+    .options input[type="radio"] {
+      margin-right: 10px;
+    }
+    .btn-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+    .btn-group button, #startPuzzleBtn, .final-score button {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s ease;
+      color: white;
+      background-color: #4caf50; /* Green for Next/Start */
+    }
+    .btn-group button:hover, #startPuzzleBtn:hover, .final-score button:hover {
+      opacity: 0.9;
+    }
+    #prevBtn {
+      background-color: #ff9800; /* Orange for Previous */
+    }
+    #skipBtn {
+      background-color: #f44336; /* Red for Skip */
+    }
+    #viewPuzzleBtn {
+        background-color: #8e24aa !important; /* Purple for View Puzzle */
+        order: -1; /* Place it first */
+    }
+    .final-score {
+      text-align: center;
+      padding: 30px;
+      border: 2px dashed #3f51b5;
+      border-radius: 8px;
+      background-color: #e3f2fd;
+    }
+    .final-score h3 {
+      color: #3f51b5;
+    }
+    .final-score p {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+    }
+    .review-section h2 {
+      color: #3f51b5;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .review-puzzle {
+      background-color: #f8f8f8;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    .review-puzzle h3 {
+      color: #673ab7;
+      margin-top: 0;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    .review-question {
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+    .review-question p {
+      margin: 5px 0;
+    }
+    .review-question.correct {
+      background-color: #e8f5e9;
+      border-left: 4px solid #4caf50;
+    }
+    .review-question.incorrect {
+      background-color: #ffebee;
+      border-left: 4px solid #f44336;
+    }
+    .review-question.skipped {
+      background-color: #fffde7;
+      border-left: 4px solid #ffeb3b;
+    }
+    .restart-btn {
+      background-color: #3f51b5 !important;
+      margin-top: 20px;
+    }
+    footer {
+      margin-top: 30px;
+      text-align: center;
+      color: #888;
+      font-size: 0.9em;
+    }
+    footer span {
+      color: red;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Box based Puzzle Set-1</h2>
+    <div class="progress-container">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+    <div id="content"></div>
+    <div id="result"></div>
+    <footer>
+      &copy; 2025 By Supriyo Das | Made with <span style="color: red; font-size: 20px;">&hearts;</span>
+    </footer>
+  </div>
+
+  <script>
+    "use strict";
+
+    const puzzles = [
+      {
+        description: `<span style="color:#8e24aa; font-weight:bold;">Puzzle 1</span><br>
+        Seven boxes - A, B, C, D, E, F, and G are kept one above the other on a single stack, but not necessarily in the same order.
+        The lowermost shelf is numbered as one and the topmost shelf is numbered as seven.
+        <p>Only two boxes are kept between G and C, where either of the boxes is kept on the lowermost shelf.
+        Only one box is kept between the boxes D and C. Both the boxes D and G are kept on adjacent shelves.
+        Box B is kept two boxes above box A. Box A is kept above box G. The number of boxes kept above box E is the same as the number of boxes kept below box F. Box E is kept above box A.</p>`,
+        questions: [
+          {
+            question: "Puzzle 1, Q1: How many boxes are kept between A and C?",
+            options: ["Four", "Three", "Two", "One", "Five"],
+            answer: "Two"
+          },
+          {
+            question: "Puzzle 1, Q2: Four of the following five are alike and hence form a group. Which one does not belong to that group?",
+            options: ["BE", "AG", "DF", "FC", "ED"],
+            answer: "ED"
+          },
+          {
+            question: "Puzzle 1, Q3: Which statement is/are true with respect to the final arrangement?",
+            options: [
+              "Only two boxes are kept between B and G",
+              "Box F is kept immediately above box D",
+              "No box is kept below box G",
+              "Box B is kept on an even numbered shelf",
+              "None of the statements are true"
+            ],
+            answer: "Only two boxes are kept between B and G"
+          },
+          {
+            question: "Puzzle 1, Q4: Box E is kept on which shelf?",
+            options: ["Sixth", "Seventh", "Fourth", "Fifth", "Second"],
+            answer: "Sixth"
+          },
+          {
+            question: "Puzzle 1, Q5: As many boxes are kept above box B as below _____?",
+            options: ["Box F", "Box C", "Box G", "Box A", "Box D"],
+            answer: "Box C"
+          }
+        ],
+        userAnswers: []
+      },
+      {
+        description: `<span style="color:#8e24aa; font-weight:bold;">Puzzle 2</span><br>
+        Eight boxes - P, Q, R, S, T, U, V, and W are kept one above the other on a single stack, but not necessarily in the same order.
+        The lowermost shelf is numbered as one and the topmost shelf is numbered as eight.
+        <p> Only one box is kept between P and W. Box S is kept immediately above box W.
+        Box R is kept two boxes above box V. Only two boxes are kept between W and V. Boxes R and W are not kept adjacent to each other.
+         Box U is kept immediately above box Q. Box U is kept somewhere below box S.</p>`,
+        questions: [
+          {
+            question: "Puzzle 2, Q6: Which box is kept on the fourth shelf?",
+            options: [
+              "The box which is kept two boxes below box P",
+              "The box which is kept immediately above box W",
+              "Box U",
+              "Box Q",
+              "Box T"
+            ],
+            answer: "The box which is kept immediately above box W"
+          },
+          {
+            question: "Puzzle 2, Q7: How many boxes are kept below box P?",
+            options: ["One", "Five", "Two", "Three", "Four"],
+            answer: "Four"
+          },
+          {
+            question: "Puzzle 2, Q8: Which box is kept three boxes below box T?",
+            options: [
+              "The box which is kept two boxes above box U",
+              "The box which is kept two boxes below box S",
+              "Box R",
+              "Box W",
+              "Box P"
+            ],
+            answer: "The box which is kept two boxes above box U"
+          },
+          {
+            question: "Puzzle 2, Q9: Which statement(s) is/are true with respect to the final arrangement?",
+            options: [
+              "Both I and II",
+              "Only III",
+              "Only II",
+              "Only I",
+              "Both II and III"
+            ],
+            answer: "Both II and III"
+          },
+          {
+            question: "Puzzle 2, Q10: If all the boxes are arranged in alphabetical order from the top shelf, then how many boxes remain unchanged?",
+            options: ["None", "One", "Two", "Three", "Four"],
+            answer: "None"
+          }
+        ],
+        userAnswers: []
+      },
+      {
+        description: `<span style="color:#8e24aa; font-weight:bold;">Puzzle 3</span><br>
+        Nine boxes - L, M, N, O, P, Q, R, S, and T are kept one above another on a single stack but not necessarily in the same order.
+        The lowermost shelf is numbered as one and the topmost shelf is numbered as nine.
+        <p> Only four boxes are kept between T and N (with N below T). Box L is kept two boxes above box T.
+        Only one box is kept between N and O. Box P is kept immediately above box M.
+        The number of boxes between M and T is the same as between Q and S.
+        Box Q is not adjacent to either box T or box N. </p>`,
+        questions: [
+          {
+            question: "Puzzle 3, Q11: Which box is kept on the lowermost shelf?",
+            options: ["Box L", "Box P", "Box T", "Box N", "Box R"],
+            answer: "Box N"
+          },
+          {
+            question: "Puzzle 3, Q12: Which statement(s) is/are true with respect to the final arrangement?",
+            options: [
+              "Only (I) and (III)",
+              "Only (I) and (IV)",
+              "Only (II) and (III)",
+              "Only (II) and (IV)",
+              "All (I), (II), (III) and (IV)"
+            ],
+            answer: "Only (I) and (III)"
+          },
+          {
+            question: "Puzzle 3, Q13: How many boxes are kept between N and T?",
+            options: ["Five", "Four", "Three", "Two", "One"],
+            answer: "Four"
+          },
+          {
+            question: "Puzzle 3, Q14: If the positions of box R and box M are interchanged, which box is kept immediately below box M?",
+            options: ["Box Q", "Box N", "Box P", "Box L", "Box S"],
+            answer: "Box P"
+          },
+          {
+            question: "Puzzle 3, Q15: What is the position of box S from the top?",
+            options: ["First", "Second", "Fifth", "Fourth", "Third"],
+            answer: "Third"
+          }
+        ],
+        userAnswers: []
+      },
+      {
+        description: `<span style="color:#8e24aa; font-weight:bold;">Puzzle 4</span><br>
+        Eight boxes - E, F, G, H, I, J, K, and L are kept one above the other on a single stack, but not necessarily in the same order.
+        The lowermost shelf is numbered as one and the topmost shelf is numbered as eight. Only three boxes are kept between K and L, where neither the bottom nor the top shelf is used.
+        [Additional info:] Box K is kept below box L. The number of boxes kept above box L equals the number of boxes kept below box G.
+        Only two boxes are kept between G and J. Box F is kept three boxes above box I. Box H is not adjacent to box J.`,
+        questions: [
+          {
+            question: "Puzzle 4, Q16: Which box is kept three boxes above box G?",
+            options: ["Box J", "Box F", "Box H", "Box L", "Box E"],
+            answer: "Box J"
+          },
+          {
+            question: "Puzzle 4, Q17: Which boxes are kept above box F?",
+            options: [
+              "Only I and IV",
+              "Only I and III",
+              "Only III and IV",
+              "Only II and III",
+              "Only I and II"
+            ],
+            answer: "Only I and II"
+          },
+          {
+            question: "Puzzle 4, Q18: Which combination is true with respect to the final arrangement?",
+            options: [
+              "Second-Box G",
+              "Third-Box J",
+              "Eighth-Box L",
+              "First-Box K",
+              "Fifth-Box F"
+            ],
+            answer: "Second-Box G"
+          },
+          {
+            question: "Puzzle 4, Q19: How many boxes are kept above box L?",
+            options: ["Two", "Three", "One", "Four", "Five"],
+            answer: "One"
+          },
+          {
+            question: "Puzzle 4, Q20: Four of the following five are alike and form a group. Which one does not belong?",
+            options: ["Box H", "Box E", "Box F", "Box I", "Box G"],
+            answer: "Box I"
+          }
+        ],
+        userAnswers: []
+      },
+      {
+        description: `<span style="color:#8e24aa; font-weight:bold;">Puzzle 5</span><br>
+        8 students (J to Q) watch IPL RCB VS DEL in different months i.e. June, July, September and November on different dates i.e. 12th and 17th.
+        <p>The number of students who watch before L is the same as the number of students who watch after P. P watches after L. Not more than one person watches between M and P. N does not watch on an odd date. N watches 3 months before O but on the same date. K watches immediately before O. Q watches IPL after O on an even date.</p>`,
+        questions: [
+          {
+            question: "Puzzle 5, Q21: Who watches IPL on July 17th?",
+            options: ["J", "K", "L", "O", "M"],
+            answer: "K"
+          },
+          {
+            question: "Puzzle 5, Q22: On which date and month does M watch IPL?",
+            options: ["November 12th", "September 17th", "July 12th", "November 17th", "June 17th"],
+            answer: "November 17th"
+          },
+          {
+            question: "Puzzle 5, Q23: How many students watch IPL between N and Q?",
+            options: ["One", "Two", "Three", "Four", "None"],
+            answer: "Two"
+          },
+          {
+            question: "Puzzle 5, Q24: Which of the following pairs watch IPL on the same date?",
+            options: ["L and K", "J and Q", "N and O", "P and M", "None of these"],
+            answer: "N and O"
+          },
+          {
+            question: "Puzzle 5, Q25: If J is related to June 17th, then Q is related to what?",
+            options: ["November 12th", "September 12th", "July 12th", "November 17th", "June 12th"],
+            answer: "November 12th"
+          }
+        ],
+        userAnswers: []
+      },
+      {
+        description: `<span style="color:#8e24aa; font-weight:bold;">Puzzle 6</span><br>
+        Eight persons S, T, U, V, W, X, Y and Z are sitting in a row. Some of them are facing north and some are facing south.
+        <p>Z sits fifth to the left of U. Only two persons sit between U and X. T sits third to the left of X. U and Z do not sit at any ends of the row. Both persons sitting at the extreme ends face opposite directions to each other. Both immediate neighbors of X face in the same direction. V is second to the right of X. S is second to the left of V. W is second to the left of U. S does not face the south direction. T is second to the right of Y. S and V face in the same direction.</p>`,
+        questions: [
+          {
+            question: "Puzzle 6, Q26: How many persons are facing North?",
+            options: ["Three", "Four", "Five", "Two", "Six"],
+            answer: "Five"
+          },
+          {
+            question: "Puzzle 6, Q27: Who sits at the extreme left end of the row?",
+            options: ["U", "S", "W", "Z", "X"],
+            answer: "S"
+          },
+          {
+            question: "Puzzle 6, Q28: What is the position of Y with respect to W?",
+            options: ["Immediate right", "Second to the right", "Third to the left", "Immediate left", "Second to the left"],
+            answer: "Immediate right"
+          },
+          {
+            question: "Puzzle 6, Q29: Which of the following statements is true?",
+            options: ["T faces North", "X and Y face opposite directions", "U is an immediate neighbor of V", "Z sits at one of the ends", "None of these"],
+            answer: "U is an immediate neighbor of V"
+          },
+          {
+            question: "Puzzle 6, Q30: Four of the following five are alike in a certain way and hence form a group. Which one does not belong to that group?",
+            options: ["S", "V", "X", "Y", "Z"],
+            answer: "Z"
+          }
+        ],
+        userAnswers: []
+      },
+      {
+        description: `<span style="color:#8e24aa; font-weight:bold;">Puzzle 7</span><br>
+        Ten person A-J are living in a building having 5 floors and on each floor there are two flats like Flat 1 and Flat 2. Flat 1 is west of flat 2. The topmost floor is numbered as 5 and the bottommost floor is numbered as 1.
+        <p>D lives three floors below F in a different flat. A lives northwest of D but not immediately. Two floor gap between G and A and both live in the same flat. The number of floors below G is one less than the number of floors above E who doesn't live on the same floor as A. B lives northeast of C who doesn't live on the same floor as D. I lives below H. B lives below J.</p>`,
+        questions: [
+          {
+            question: "Puzzle 7, Q31: Who lives on the 5th floor, Flat 2?",
+            options: ["A", "J", "F", "B", "C"],
+            answer: "J"
+          },
+          {
+            question: "Puzzle 7, Q32: What is the flat and floor number of G?",
+            options: ["Flat 1, Floor 2", "Flat 2, Floor 2", "Flat 1, Floor 1", "Flat 2, Floor 1", "Flat 1, Floor 3"],
+            answer: "Flat 1, Floor 2"
+          },
+          {
+            question: "Puzzle 7, Q33: How many floors are between B and H?",
+            options: ["None", "One", "Two", "Three", "Four"],
+            answer: "None"
+          },
+          {
+            question: "Puzzle 7, Q34: Which of the following is true regarding E?",
+            options: ["E lives on Floor 3, Flat 2", "E lives on Floor 4, Flat 1", "E lives immediately above H", "E lives with C on the same floor", "None of these"],
+            answer: "E lives on Floor 3, Flat 2"
+          },
+          {
+            question: "Puzzle 7, Q35: If all persons in Flat 1 are moved to Flat 2, and Flat 2 persons to Flat 1, who will be on Floor 4, Flat 1?",
+            options: ["F", "B", "J", "A", "H"],
+            answer: "B"
+          }
+        ],
+        userAnswers: []
+      },
+      {
+        description: `<span style="color:#8e24aa; font-weight:bold;">Puzzle 8</span><br>
+        Seven persons Arun, Amit, Atul, Aman, Ayush, Anil and Akhil were eating different foods on differently coloured tables. The foods were cake, sandwich, pasta, pizza, paratha, corn and toast not necessarily in the same order. The colours were black, pink, green, orange, blue, red and yellow not necessarily in the same order.
+        <p>Aman was eating on the orange table. Anil was eating either on the pink or yellow table. Atul ate either pasta or cake. Neither Ayush nor Akhil eaten on the black table. Sandwich was eaten on the pink table. Ayush did not eat sandwich. Toast was eaten on the blue table but not by Akhil. Corn was eaten on the green table. Neither pasta nor paratha was eaten on the yellow table. Pizza was eaten on the black table. Arun was eating paratha.</p>`,
+        questions: [
+          {
+            question: "Puzzle 8, Q36: Who was eating Pasta?",
+            options: ["Arun", "Amit", "Aman", "Atul", "Anil"],
+            answer: "Aman"
+          },
+          {
+            question: "Puzzle 8, Q37: Which food was eaten on the Yellow table?",
+            options: ["Pasta", "Paratha", "Cake", "Corn", "Sandwich"],
+            answer: "Cake"
+          },
+          {
+            question: "Puzzle 8, Q38: What was Akhil eating?",
+            options: ["Toast", "Corn", "Pizza", "Sandwich", "Paratha"],
+            answer: "Corn"
+          },
+          {
+            question: "Puzzle 8, Q39: Which person-food-color combination is correct?",
+            options: ["Amit-Pizza-Black", "Anil-Sandwich-Yellow", "Arun-Paratha-Orange", "Atul-Pasta-Red", "Ayush-Corn-Blue"],
+            answer: "Amit-Pizza-Black"
+          },
+          {
+            question: "Puzzle 8, Q40: Toast was eaten by whom?",
+            options: ["Akhil", "Anil", "Ayush", "Aman", "Arun"],
+            answer: "Ayush"
+          }
+        ],
+        userAnswers: []
+      },
+      {
+        description: `<span style="color:#8e24aa; font-weight:bold;">Puzzle 9</span><br>
+        Nine person J - R are working in a bank at different posts such as GM, DGM, AGM, Manager, AM, SO, PO, Cashier and Clerk but not necessarily in the same order. GM is the senior most, DGM is 2nd senior most person and so on.
+        <p>L is just lower post than J. At most one person between N and L. Q is not DGM. More than 4 posts are between M and Q. The number of posts between M and K is the same as the number of posts between R and P. Three posts are there between M and O who is just senior to R. R is senior to SO. Q is senior to M. P is senior to R.</p>`,
+        questions: [
+          {
+            question: "Puzzle 9, Q41: Who holds the post of GM?",
+            options: ["P", "Q", "J", "O", "R"],
+            answer: "Q"
+          },
+          {
+            question: "Puzzle 9, Q42: What is the post of K?",
+            options: ["Cashier", "Clerk", "PO", "SO", "AM"],
+            answer: "Clerk"
+          },
+          {
+            question: "Puzzle 9, Q43: How many persons are senior to R?",
+            options: ["One", "Two", "Three", "Four", "Five"],
+            answer: "Three"
+          },
+          {
+            question: "Puzzle 9, Q44: Which of the following statements is true?",
+            options: ["M is PO", "N is AM", "L is Cashier", "P is AGM", "O is GM"],
+            answer: "M is PO"
+          },
+          {
+            question: "Puzzle 9, Q45: If J is related to AM and L is related to SO, then P is related to which post?",
+            options: ["GM", "AGM", "DGM", "Manager", "PO"],
+            answer: "DGM"
+          }
+        ],
+        userAnswers: []
+      },
+      {
+        description: `<span style="color:#8e24aa; font-weight:bold;">Puzzle 10</span><br>
+        Twelve people were seated in two different rows such that they were facing each other. Q, R, S, T, U, V were seated in row 1 were facing north while J, K, L, M, N, O were seated in row 2 and were facing south.
+        <p>Two people were seated between M and N. The person seated opposite to M is seated second to the left of R. Q is seated third to the left of R. O is seated opposite to Q. T is seated to the left of U but to the right of S. S is seated opposite to the one who is a neighbor of O. N is seated to the immediate right of the person who is seated opposite to V. L is seated to the immediate left of K.</p>`,
+        questions: [
+          {
+            question: "Puzzle 10, Q46: Who is seated opposite to J?",
+            options: ["R", "U", "S", "T", "V"],
+            answer: "R"
+          },
+          {
+            question: "Puzzle 10, Q47: How many persons are seated between Q and V in Row 1?",
+            options: ["One", "Two", "Three", "Four", "None"],
+            answer: "Three"
+          },
+          {
+            question: "Puzzle 10, Q48: Which of the following pairs are seated at the extreme ends of the rows?",
+            options: ["O, Q", "M, U", "J, S", "N, V", "K, T"],
+            answer: "J, V"
+          },
+          {
+            question: "Puzzle 10, Q49: Who is seated to the immediate right of S?",
+            options: ["Q", "T", "R", "U", "V"],
+            answer: "T"
+          },
+          {
+            question: "Puzzle 10, Q50: If Q and S interchange their positions, who will be opposite to S?",
+            options: ["O", "J", "K", "L", "M"],
+            answer: "O"
+          }
+        ],
+        userAnswers: []
+      },
+      {
+        description: `<span style="color:#8e24aa; font-weight:bold;">Puzzle 11</span><br>
+        Nine person N-V are living on a nine floor building such that the bottom floor is numbered as 1 and topmost floor is numbered as 9.
+        <p>P lives just above Q. R lives below N. Number of person living between S and P is two less than between U and R. One person lives between P and O who lives immediate above N. P lives on an odd number floor above V. Q lives three floors above V who lives on prime number floor.</p>`,
+        questions: [
+          {
+            question: "Puzzle 11, Q51: Who lives on the 9th floor?",
+            options: ["S", "T", "U", "V", "P"],
+            answer: "T"
+          },
+          {
+            question: "Puzzle 11, Q52: How many persons live between O and V?",
+            options: ["None", "One", "Two", "Three", "Four"],
+            answer: "One"
+          },
+          {
+            question: "Puzzle 11, Q53: Which person lives on floor number 2?",
+            options: ["N", "R", "S", "Q", "P"],
+            answer: "S"
+          },
+          {
+            question: "Puzzle 11, Q54: Which of the following statements is true?",
+            options: ["U lives on floor 8", "R lives on an even numbered floor", "Q lives just above V", "O lives on floor 6", "None of these"],
+            answer: "U lives on floor 8"
+          },
+          {
+            question: "Puzzle 11, Q55: If T and R interchange their positions, who lives on the 1st floor?",
+            options: ["R", "T", "S", "N", "V"],
+            answer: "T"
+          }
+        ],
+        userAnswers: []
+      },
+      {
+        description: `<span style="color:#8e24aa; font-weight:bold;">Puzzle 12</span><br>
+        Six boxes - A, B, C, D, E and F are placed one above another. These boxes are of different types - Jute, Steel, Iron, Wood, Leather, Brass. All the information is not necessarily in the same order.
+        <p>Box D is placed three places above leather box. Same number of boxes are placed above box D and below steel box. Box B is placed just below box F and just above wood box. Box A is placed two places below iron box. More than one box is placed below box C which is placed below brass box.</p>`,
+        questions: [
+          {
+            question: "Puzzle 12, Q56: Which box is of Leather type?",
+            options: ["A", "B", "C", "E", "F"],
+            answer: "B"
+          },
+          {
+            question: "Puzzle 12, Q57: How many boxes are placed between D and B?",
+            options: ["None", "One", "Two", "Three", "Four"],
+            answer: "Two"
+          },
+          {
+            question: "Puzzle 12, Q58: Which type of box is placed immediately below the Brass box?",
+            options: ["Jute", "Leather", "Steel", "Wood", "Iron"],
+            answer: "Jute"
+          },
+          {
+            question: "Puzzle 12, Q59: Which of the following statements is false?",
+            options: ["F is an Iron box", "E is a Steel box", "A is a Wood box", "C is a Leather box", "D is a Brass box"],
+            answer: "C is a Leather box"
+          },
+          {
+            question: "Puzzle 12, Q60: If the positions of Box A and Box E are interchanged, which box is at the bottommost position?",
+            options: ["A", "E", "B", "C", "D"],
+            answer: "A"
+          }
+        ],
+        userAnswers: []
+      },
+      {
+        description: `<span style="color:#8e24aa; font-weight:bold;">Puzzle 13</span><br>
+        A Certain number of persons sit in a row facing north.
+        <p>R sits 2nd to the left of J. Q sits 4th to the right of R. Four persons sit between A and S. S sits 6th to the left of U. T sits exactly between S and U. As many persons sit to the left of K as many right of K. R sits 2nd from one of the extreme ends. M sits 2nd to the right of U. A and U are not an immediate neighbour. K sits 3rd to the right of A. One person sits between Q and A.</p>`,
+        questions: [
+          {
+            question: "Puzzle 13, Q61: What is the total number of persons in the row?",
+            options: ["18", "19", "20", "21", "22"],
+            answer: "21"
+          },
+          {
+            question: "Puzzle 13, Q62: How many persons sit to the left of Q?",
+            options: ["Five", "Six", "Seven", "Eight", "Nine"],
+            answer: "Seven"
+          },
+          {
+            question: "Puzzle 13, Q63: Who sits immediately to the right of S?",
+            options: ["T", "U", "A", "K", "M"],
+            answer: "T"
+          },
+          {
+            question: "Puzzle 13, Q64: Which of the following is true?",
+            options: ["J sits at one of the extreme ends", "Q sits to the immediate left of A", "Three persons sit between K and T", "M sits third from the right end", "None of these"],
+            answer: "M sits third from the right end"
+          },
+          {
+            question: "Puzzle 13, Q65: What is the position of K with respect to M?",
+            options: ["Immediate left", "Second to the left", "Third to the left", "Immediate right", "Second to the right"],
+            answer: "Second to the left"
+          }
+        ],
+        userAnswers: []
+      },
+      {
+        description: `<span style="color:#8e24aa; font-weight:bold;">Puzzle 14</span><br>
+        Six persons A, C, H, K, M and P visit a museum (but not necessarily in the same order) on different days of a week starting from Sunday. One day no person is visit museum i.e. one day is Off day.
+        <p>Two day gap between visit of P and M. Three person visit between M and C who visits just before off. A visit before K who visit before H. At least one person visit before C and M. At least one person visit before P and H. M does not visit near to H.</p>`,
+        questions: [
+          {
+            question: "Puzzle 14, Q66: On which day is the Off Day?",
+            options: ["Friday", "Saturday", "Sunday", "Monday", "Thursday"],
+            answer: "Saturday"
+          },
+          {
+            question: "Puzzle 14, Q67: How many persons visit between A and P?",
+            options: ["One", "Two", "Three", "None", "Four"],
+            answer: "Three"
+          },
+          {
+            question: "Puzzle 14, Q68: Who visits on Monday?",
+            options: ["A", "K", "M", "P", "C"],
+            answer: "M"
+          },
+          {
+            question: "Puzzle 14, Q69: Which of the following is true?",
+            options: ["C visits on Friday", "H visits before K", "P visits on Tuesday", "A is the last to visit", "None of these"],
+            answer: "C visits on Friday"
+          },
+          {
+            question: "Puzzle 14, Q70: If all persons visit in alphabetical order starting from Sunday (excluding Off Day), how many persons' visiting days remain unchanged?",
+            options: ["None", "One", "Two", "Three", "Four"],
+            answer: "One" /* Only C remains on Friday if others rearrange alphabetically */
+          }
+        ],
+        userAnswers: []
+      }
+    ];
+
+    // Global state variables
+    let currentPuzzleIndex = 0;
+    let currentQuestionIndex = 0;
+    const totalQuestions = puzzles.reduce((sum, puzzle) => sum + puzzle.questions.length, 0);
+    const contentDiv = document.getElementById("content");
+    const resultDiv = document.getElementById("result");
+    const progressBar = document.getElementById("progressBar");
+
+    // Update the progress bar for the current puzzle.
+    function updateProgress() {
+      const puzzle = puzzles[currentPuzzleIndex];
+      const progressPercent = (currentQuestionIndex / puzzle.questions.length) * 100;
+      progressBar.style.width = progressPercent + "%";
+    }
+
+    /**
+     * Shuffle an array in place using Fisher-Yates algorithm.
+     * @param {Array} array
+     */
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    // Shuffle options for each question in all puzzles at the start
+    puzzles.forEach(puzzle => {
+      puzzle.questions.forEach(q => {
+        // Store the original answer before shuffling
+        q._originalAnswer = q.answer;
+        shuffleArray(q.options);
+        // Update the answer to match the shuffled option
+        q.answer = q.options.find(opt => opt === q._originalAnswer);
+      });
+    });
+
+    // Display the description for the current puzzle.
+    function showPuzzleDescription() {
+      updateProgress();
+      const puzzle = puzzles[currentPuzzleIndex];
+      contentDiv.innerHTML = `
+        <div class="description">
+          <h3>${puzzle.description}</h3>
+        </div>
+        <button id="startPuzzleBtn">Go to Questions ${currentPuzzleIndex + 1}</button>
+      `;
+      document.getElementById("startPuzzleBtn").addEventListener("click", () => {
+        // Initialize the userAnswers array if not yet created
+        if (!puzzle.userAnswers.length) {
+          puzzle.userAnswers = new Array(puzzle.questions.length).fill(null);
+        }
+        currentQuestionIndex = 0;
+        showQuestion();
+      });
+    }
+
+    /**
+     * Function to add a "View Puzzle" button to the question screen.
+     * This will allow users to see the puzzle description while answering questions.
+     */
+    function addViewPuzzleButton() {
+      const btnGroup = document.querySelector('.btn-group');
+      if (btnGroup && !document.getElementById('viewPuzzleBtn')) {
+        const viewBtn = document.createElement('button');
+        viewBtn.id = 'viewPuzzleBtn';
+        viewBtn.textContent = 'View Puzzle';
+        viewBtn.style.background = '#8e24aa';
+        viewBtn.style.order = '-1';
+        viewBtn.addEventListener('click', () => {
+          showPuzzleDescription();
+        });
+        btnGroup.insertBefore(viewBtn, btnGroup.firstChild);
+      }
+    }
+
+    // Original showQuestion function
+    function showQuestion() {
+      updateProgress();
+      const puzzle = puzzles[currentPuzzleIndex];
+      if (currentQuestionIndex >= puzzle.questions.length) {
+        showPuzzleCompletion();
+        return;
+      }
+      const q = puzzle.questions[currentQuestionIndex];
+      const progressText = `<div class="progress-text">Puzzle ${currentPuzzleIndex + 1}: Question ${currentQuestionIndex + 1} of ${puzzle.questions.length}</div>`;
+      contentDiv.innerHTML = progressText + `
+        <div class="question">
+          <p>${q.question}</p>
+          <ul class="options">
+            ${q.options.map((option, i) => {
+              const checked = (puzzle.userAnswers[currentQuestionIndex] === option) ? "checked" : "";
+              return `<li onclick="selectOption('option${i}')">
+                        <input type="radio" id="option${i}" name="option" value="${option}" ${checked}>
+                        <label for="option${i}">${option}</label>
+                      </li>`;
+            }).join('')}
+          </ul>
+        </div>
+        <div class="btn-group">
+          ${currentQuestionIndex > 0 ? '<button id="prevBtn">Previous</button>' : ''}
+          <button id="skipBtn">Skip</button>
+          <button id="nextBtn">Next</button>
+        </div>
+      `;
+      if(document.getElementById("prevBtn")) {
+        document.getElementById("prevBtn").addEventListener("click", goToPreviousQuestion);
+      }
+      document.getElementById("skipBtn").addEventListener("click", skipQuestion);
+      document.getElementById("nextBtn").addEventListener("click", evaluateAnswer);
+
+      // Always add the "View Puzzle" button
+      addViewPuzzleButton();
+    }
+
+    // Highlight the chosen option and check its radio button.
+    function selectOption(optionId) {
+      document.querySelectorAll("ul.options li").forEach(li => li.style.backgroundColor = '');
+      const selectedLi = document.getElementById(optionId).parentNode;
+      selectedLi.style.backgroundColor = "#e8eaf6";
+      document.getElementById(optionId).checked = true;
+    }
+
+    // Save the answer (if any) and move to the next question.
+    function evaluateAnswer() {
+      const puzzle = puzzles[currentPuzzleIndex];
+      const selectedOption = document.querySelector("input[name='option']:checked");
+      if (!selectedOption) {
+        alert("Please select an answer or use the Skip button!");
+        return;
+      }
+      puzzle.userAnswers[currentQuestionIndex] = selectedOption.value;
+      currentQuestionIndex++;
+      showQuestion();
+    }
+
+    // Skip the current question.
+    function skipQuestion() {
+      const puzzle = puzzles[currentPuzzleIndex];
+      puzzle.userAnswers[currentQuestionIndex] = null;
+      currentQuestionIndex++;
+      showQuestion();
+    }
+
+    // Go back to the previous question.
+    function goToPreviousQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        showQuestion();
+      }
+    }
+
+    // When completing the current puzzle, handle moving to the next or showing the final result.
+    function showPuzzleCompletion() {
+      updateProgress();
+      contentDiv.innerHTML = `
+        <div class="description">
+          <h3>You have completed Puzzle ${currentPuzzleIndex + 1}.</h3>
+        </div>
+      `;
+      if (currentPuzzleIndex < puzzles.length - 1) {
+        const btn = document.createElement("button");
+        btn.innerText = "Next Puzzle";
+        btn.addEventListener("click", () => {
+          currentPuzzleIndex++;
+          showPuzzleDescription();
+        });
+        contentDiv.appendChild(btn);
+      } else {
+        showFinalResult();
+      }
+    }
+
+    // Compute the overall score by comparing stored answers with correct answers.
+    function computeScore() {
+      let score = 0;
+      puzzles.forEach(puzzle => {
+        puzzle.questions.forEach((q, i) => {
+          if (puzzle.userAnswers[i] === q.answer) {
+            score++;
+          }
+        });
+      });
+      return score;
+    }
+
+    // Display the final result with a colorful, professional style and buttons to review or restart.
+    function showFinalResult() {
+      const overallScore = computeScore();
+      const percentage = Math.round((overallScore / totalQuestions) * 100);
+      contentDiv.innerHTML = `
+        <div class="final-score">
+          <h3>Your Score: ${overallScore} out of ${totalQuestions}</h3>
+          <p>Percentage: ${percentage}%</p>
+          <button id="reviewBtn">Review Answers 🔍</button>
+          <button id="restartBtn" class="restart-btn">Restart Quiz 🔄</button>
+        </div>
+      `;
+      resultDiv.innerHTML = "";
+      document.getElementById("reviewBtn").addEventListener("click", showReview);
+      document.getElementById("restartBtn").addEventListener("click", restartQuiz);
+    }
+
+    // The review function: List each puzzle and its questions with color-coded feedback and emojis.
+    // For skipped questions, the correct answer is also shown.
+    function showReview() {
+      let reviewHTML = `<div class="review-section"><h2>Review Answers</h2>`;
+
+      puzzles.forEach((puzzle, pIndex) => {
+        reviewHTML += `<div class="review-puzzle">
+                        <h3>Puzzle ${pIndex + 1}</h3>`;
+        puzzle.questions.forEach((q, qIndex) => {
+          const userAnswer = puzzle.userAnswers[qIndex];
+          const correctAnswer = q.answer;
+          let statusClass = "";
+          let statusText = "";
+          if (userAnswer === null) {
+            statusClass = "skipped";
+            statusText = `⚠️ Skipped. Correct Answer: <span style="color:#2e7d32; font-weight:bold;">${correctAnswer}</span>`;
+          } else if (userAnswer === correctAnswer) {
+            statusClass = "correct";
+            statusText = "✅ Correct!";
+          } else {
+            statusClass = "incorrect";
+            statusText = `❌ Incorrect. Your Answer: <span style="color:#c62828; font-weight:bold;">${userAnswer}</span> | Correct Answer: <span style="color:#2e7d32; font-weight:bold;">${correctAnswer}</span>`;
+          }
+          reviewHTML += `<div class="review-question ${statusClass}">
+                           <p><em>Q${qIndex + 1}:</em> ${q.question}</p>
+                           <p>${statusText}</p>
+                         </div>`;
+        });
+        reviewHTML += `</div>`;
+      });
+
+      reviewHTML += `<button id="restartBtn2" class="restart-btn">Restart Quiz 🔄</button></div>`;
+      contentDiv.innerHTML = reviewHTML;
+      document.getElementById("restartBtn2").addEventListener("click", restartQuiz);
+    }
+
+    // Restart the quiz by resetting state and clearing user responses.
+    function restartQuiz() {
+      currentPuzzleIndex = 0;
+      currentQuestionIndex = 0;
+      puzzles.forEach(puzzle => puzzle.userAnswers = new Array(puzzle.questions.length).fill(null));
+      resultDiv.innerHTML = "";
+      showPuzzleDescription();
+    }
+
+    // Initialize the quiz.
+    showPuzzleDescription();
+
+    // Expose the selectOption function for inline use.
+    window.selectOption = selectOption;
+  </script>
+</body>
+</html>

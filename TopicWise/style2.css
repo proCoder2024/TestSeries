@@ -90,7 +90,7 @@
       transform: scale(1.2);
       vertical-align: middle;
     }
-    .btn-group {
+     .btn-group {
       display: flex;
       justify-content: space-between;
       gap: 10px;
@@ -109,6 +109,16 @@
     }
     button:hover {
       background: #303f9f;
+    } 
+    #prevBtn {
+      background-color: #ff9800; /* Orange for Previous */
+    }
+    #skipBtn {
+      background-color: #f44336; /* Red for Skip */
+    }
+    #viewPuzzleBtn {
+        background-color: #8e24aa !important; /* Purple for View Puzzle */
+        order: -1; /* Place it first */
     }
     .restart-btn {
       background: #f44336;
