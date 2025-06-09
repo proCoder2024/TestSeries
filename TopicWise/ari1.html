@@ -26,9 +26,9 @@
 
   <script>
     "use strict";
-
+    // Removed addViewPuzzleButton and all references to "View Intro"
     /* ------------------------------------------------------------------
-       SINGLE-PUZZLE DATA (10 questions)
+       SINGLE-PUZZLE DATA (10 questions) 
        ------------------------------------------------------------------ */
     const puzzles = [
       {
@@ -177,18 +177,18 @@
         });
     }
 
-    function addViewPuzzleButton() {
-      const btnGroup = document.querySelector(".btn-group");
-      if (btnGroup && !document.getElementById("viewPuzzleBtn")) {
-        const v = document.createElement("button");
-        v.id = "viewPuzzleBtn";
-        v.textContent = "View Intro";
-        v.style.background = "#8e24aa";
-        v.style.order = "-1";
-        v.onclick = () => showPuzzleDescription();
-        btnGroup.insertBefore(v, btnGroup.firstChild);
-      }
-    }
+    // function addViewPuzzleButton() {
+    //   const btnGroup = document.querySelector(".btn-group");
+    //   if (btnGroup && !document.getElementById("viewPuzzleBtn")) {
+    //     const v = document.createElement("button");
+    //     v.id = "viewPuzzleBtn";
+    //     v.textContent = "View Intro"; 
+    //     v.style.background = "#8e24aa";
+    //     v.style.order = "-1";
+    //     v.onclick = () => showPuzzleDescription();
+    //     btnGroup.insertBefore(v, btnGroup.firstChild);
+    //   }
+    // }
 
     function showQuestion() {
       updateProgress();
